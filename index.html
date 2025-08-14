@@ -20,17 +20,109 @@
   em{display:block;margin-top:6px;color:#4b5563}
   @media print{.timer,button{display:none}.card{break-inside:avoid}}
 </style>
+
+<!-- React + ReactDOM (UMD) then Babel (for JSX in browser) -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
 <div id="root" class="wrap"></div>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
-<script type="text/babel">
-const {useState,useEffect}=React;
+
+<script type="text/babel" data-presets="env,react">
+/* === Final Exam UI (no imports/exports, UMD + Babel) === */
+const {useState,useEffect} = React;
 const KEY='final.exam.v1';
 const toL=s=>(s==null?'':String(s)).trim().toLowerCase();
 const tokenize=s=>toL(s).replace(/[^\\w\\s]/g,' ').split(/\\s+/).filter(Boolean);
 const hasAll=(bag,req)=>req.every(w=>bag.has(w));
 const jaccard=(a,b)=>{const A=new Set(a),B=new Set(b);const inter=[...A].filter(x=>B.has(x)).length;return inter/Math.max(1,A.size+B.size-inter)};
-function gradeShort(user,rubric){if(typeof rubric==='string'){return toL(user)===toL(rubric)};const words=tokenize(user);const targets=Array.isArray(rubric.keywords?.[0])?rubric.keywords:[rubric.keywords||[]];let hits=0;for(const g of targets){if(hasAll(new Set(words),g.map(toL)))hits++}const cover=hits/Math.max(1,targets.length
+function gradeShort(user,rubric){
+  if(typeof rubric==='string') return toL(user)===toL(rubric);
+  const words=tokenize(user), set=new Set(words);
+  const groups=Array.isArray(rubric.keywords?.[0])?rubric.keywords:[rubric.keywords||[]];
+  let hits=0; for(const g of groups){ if(hasAll(set,g.map(toL))) hits++; }
+  const cover=hits/Math.max(1,groups.length);
+  const sim=jaccard(words,[...new Set(groups.flat())]);
+  return Math.max(cover,sim)>=(rubric.minScore||0.7);
+}
+function Timer({start,active,onEnd}){
+  const [t,setT]=useState(start);
+  useEffect(()=>{ if(!active) return;
+    if(t<=0){ onEnd&&onEnd(); return; }
+    const id=setInterval(()=>setT(s=>s-1),1000); return()=>clearInterval(id);
+  },[active,t]);
+  const m=Math.floor(t/60),s=t%60; return <div className="timer">{m}:{String(s).padStart(2,'0')}</div>;
+}
+function App(){
+  const [started,setStarted]=useState(false);
+  const [qs,setQs]=useState([]);
+  const saved=(()=>{ try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch{return{}} })();
+  const [ans,setAns]=useState(saved.ans||{});
+  const [graded,setGraded]=useState(!!saved.graded);
+  const [override,setOverride]=useState(saved.override||{});
+  const [err,setErr]=useState('');
+  useEffect(()=>{ localStorage.setItem(KEY,JSON.stringify({ans,graded,override})) },[ans,graded,override]);
+  useEffect(()=>{(async()=>{
+      try{
+        const r=await fetch('./final_questions.json',{cache:'no-store'});
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        const data=await r.json();
+        if(!Array.isArray(data)) throw new Error('JSON must be array');
+        setQs(data);
+      }catch(e){ setErr('Failed to load: '+e.message); }
+  })()},[]);
+  const setA=(i,v)=>setAns(p=>({...p,[i]:v}));
+  const setO=(i,v)=>setOverride(p=>({...p,[i]:v}));
+  const baseOK=(q,a)=>{
+    if(q.type==='multi') return (a||[]).map(toL).sort().join('|')===(q.answer||[]).map(toL).sort().join('|');
+    if(q.type==='short') return gradeShort(a||'',q.answer);
+    return toL(a)===toL(q.answer);
+  };
+  const scoreOne=(q,a,i)=>{ const o=override[i]; if(o==='ok') return true; if(o==='wrong') return false; return baseOK(q,a); };
+  const total=qs.length, correct=graded?qs.reduce((s,q,i)=>s+(scoreOne(q,ans[i],i)?1:0),0):0;
+  if(err) return <div className="card">{err}</div>;
+  return (<div>
+    <Timer start={3000} active={started} onEnd={()=>alert('Time is up!')}/>
+    <div className="card row">
+      <div><strong>Comprehensive Final Exam</strong> <span className="muted">{total} Questions • 50 min</span></div>
+      {!started && <button className="primary" onClick={()=>setStarted(true)}>Let's get this started</button>}
+      {started && <div className="muted">Progress: {Object.values(ans).filter(v=>Array.isArray(v)?v.length:toL(v).length).length}/{total}</div>}
+    </div>
+    {started && qs.map((q,i)=>{const a=ans[i]??(q.type==='multi'?[]:'');const ok=graded?scoreOne(q,a,i):null;const cls=graded?(ok?'ok':'bad'):'';return (
+      <div key={i} className={'card '+cls}>
+        <div className="q">{i+1}. {q.prompt} <span className="muted">({q.type==='multi'?'Multiple Select':q.type==='short'?'Short Answer':q.type==='tf'?'True/False':'Multiple Choice'})</span></div>
+        {q.type==='short'? (
+          <div>
+            <textarea className="short" rows="3" value={a} onChange={e=>setA(i,e.target.value)} placeholder="Type your answer…"/>
+            {graded && !ok && q.hint && <em>{q.hint}</em>}
+            {graded && <div style={{marginTop:6}}>
+              <select value={override[i]||''} onChange={e=>setO(i,e.target.value)}>
+                <option value="">Override</option><option value="ok">Correct</option><option value="wrong">Incorrect</option>
+              </select>
+            </div>}
+          </div>
+        ) : (
+          <div className="opts">
+            {(q.choices||[]).map((c,j)=>{
+              if(q.type==='multi'){
+                const checked=(a||[]).includes(c);
+                return <label key={j}><input type="checkbox" checked={checked}
+                  onChange={e=>{const set=new Set(a||[]);e.target.checked?set.add(c):set.delete(c);setA(i,[...set])}}/> {c}</label>;
+              }
+              return <label key={j}><input type="radio" name={`q${i}`} checked={a===c} onChange={()=>setA(i,c)}/> {c}</label>;
+            })}
+          </div>
+        )}
+      </div>
+    )})}
+    {started && <div className="card row"><div><strong>Ready to score?</strong></div>
+      <button className="primary" onClick={()=>setGraded(true)}>Score</button>
+      {graded && <div><strong>Score:</strong> {correct}/{total}</div>}
+    </div>}
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
