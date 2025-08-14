@@ -1,0 +1,138 @@
+
+[
+  {
+    "type": "tf",
+    "prompt": "A federal court cannot exercise subject-matter jurisdiction based solely on the amount in controversy.",
+    "choices": ["True", "False"],
+    "answer": "True",
+    "hint": "*Amount alone is insufficient; need diversity or a federal question.*"
+  },
+  {
+    "type": "tf",
+    "prompt": "Specific personal jurisdiction generally requires purposeful availment and that the claim arises out of the forum contacts.",
+    "choices": ["True", "False"],
+    "answer": "True",
+    "hint": "*Look for deliberate forum targeting + relatedness.*"
+  },
+  {
+    "type": "tf",
+    "prompt": "Under the parol evidence rule, a final written contract bars prior or contemporaneous terms that contradict it.",
+    "choices": ["True", "False"],
+    "answer": "True",
+    "hint": "*Fully integrated writings exclude inconsistent prior/contemporaneous terms.*"
+  },
+  {
+    "type": "tf",
+    "prompt": "Title VII permits a BFOQ based on customer preference.",
+    "choices": ["True", "False"],
+    "answer": "False",
+    "hint": "*Preference is not a defense; BFOQ is narrow and must be job-related.*"
+  },
+  {
+    "type": "tf",
+    "prompt": "A perfected secured creditor generally has priority over a subsequent lien creditor.",
+    "choices": ["True", "False"],
+    "answer": "True",
+    "hint": "*First to perfect usually wins.*"
+  },
+  {
+    "type": "single",
+    "prompt": "Which filing most directly challenges the legal sufficiency of the complaint on its face?",
+    "choices": ["Summary judgment", "Motion to dismiss", "Motion in limine", "Motion to compel"],
+    "answer": "Motion to dismiss",
+    "hint": "*Assumes facts true; tests law (12(b)(6)).*"
+  },
+  {
+    "type": "single",
+    "prompt": "Minimum contacts analysis is primarily concerned with:",
+    "choices": ["Convenience to defendant", "Purposeful availment and foreseeability", "Diversity of citizenship", "Venue selection"],
+    "answer": "Purposeful availment and foreseeability",
+    "hint": "*Did defendant reach into the forum? Would suit be foreseeable there?*"
+  },
+  {
+    "type": "single",
+    "prompt": "Which contract must be in writing under the Statute of Frauds?",
+    "choices": ["One-year employment contract fully performable in 10 months", "Sale of $300 goods", "Suretyship promise", "Month-to-month residential lease"],
+    "answer": "Suretyship promise",
+    "hint": "*A promise to answer for another’s debt typically requires a writing.*"
+  },
+  {
+    "type": "single",
+    "prompt": "A reasonable liquidated damages clause is most likely enforceable when:",
+    "choices": ["Actual damages are easily calculated", "It functions as a penalty", "Damages are difficult to estimate ex ante", "The party is a minor"],
+    "answer": "Damages are difficult to estimate ex ante",
+    "hint": "*Reasonable forecast + hard-to-estimate damages.*"
+  },
+  {
+    "type": "multi",
+    "prompt": "Select all equitable remedies:",
+    "choices": ["Specific performance", "Rescission", "Compensatory damages", "Injunction", "Reformation"],
+    "answer": ["Specific performance", "Rescission", "Injunction", "Reformation"],
+    "hint": "*Equity ≠ money damages.*"
+  },
+  {
+    "type": "single",
+    "prompt": "Under the UCC, a buyer in the ordinary course takes goods free of the seller’s:",
+    "choices": ["Perfected security interest", "Mechanic’s lien", "Tax lien", "Unperfected security interest"],
+    "answer": "Perfected security interest",
+    "hint": "*BIOC cuts off seller’s secured interest even if perfected.*"
+  },
+  {
+    "type": "multi",
+    "prompt": "Which factors support piercing the corporate veil?",
+    "choices": ["Fraud", "Undercapitalization", "Observing formalities", "Commingling assets", "Adequate records"],
+    "answer": ["Fraud", "Undercapitalization", "Commingling assets"],
+    "hint": "*Look for misuse of the entity form.*"
+  },
+  {
+    "type": "single",
+    "prompt": "Chapter 7 bankruptcy is best characterized as:",
+    "choices": ["Reorganization", "Repayment plan", "Liquidation", "Family farmer plan"],
+    "answer": "Liquidation",
+    "hint": "*Chapter 7 = liquidation.*"
+  },
+  {
+    "type": "single",
+    "prompt": "Under anti-discrimination law, the ADEA protects workers age:",
+    "choices": ["18+", "21+", "40+", "65+"],
+    "answer": "40+",
+    "hint": "*ADEA threshold is forty.*"
+  },
+  {
+    "type": "multi",
+    "prompt": "How can a secured party perfect a security interest?",
+    "choices": ["Filing UCC-1", "Possession", "Automatic PMSI in consumer goods", "Verbal notice", "Email to debtor"],
+    "answer": ["Filing UCC-1", "Possession", "Automatic PMSI in consumer goods"],
+    "hint": "*Perfection is by filing, possession, control, or automatic in limited cases.*"
+  },
+  {
+    "type": "short",
+    "prompt": "List the core elements of a valid contract.",
+    "answer": { "keywords": [["offer"], ["acceptance"], ["consideration"], ["capacity"], ["legality"]], "minScore": 0.7 },
+    "hint": "*Offer, acceptance, consideration, capacity, legality.*"
+  },
+  {
+    "type": "short",
+    "prompt": "State the four negligence elements in order.",
+    "answer": { "keywords": [["duty"], ["breach"], ["causation"], ["damages"]], "minScore": 0.7 },
+    "hint": "*Duty, breach, causation, damages.*"
+  },
+  {
+    "type": "short",
+    "prompt": "Identify two tests used for personal jurisdiction in specific-jurisdiction cases and the key principle they share.",
+    "answer": { "keywords": [["purposeful","availment"], ["relatedness"], ["fair","play","substantial","justice"]], "minScore": 0.6 },
+    "hint": "*Purposeful availment + relatedness; fairness as a backstop.*"
+  },
+  {
+    "type": "short",
+    "prompt": "Name the four primary sources of American law.",
+    "answer": { "keywords": [["constitutional"], ["statutory"], ["administrative"], ["common","case"]], "minScore": 0.7 },
+    "hint": "*Constitutional, statutory, administrative, and common (case) law.*"
+  },
+  {
+    "type": "short",
+    "prompt": "When is a liquidated-damages clause enforceable? Give two conditions.",
+    "answer": { "keywords": [["difficulty","estimating","damages"], ["reasonable","forecast"]], "minScore": 0.6 },
+    "hint": "*Uncertain damages + reasonable pre-estimate (not a penalty).*"
+  }
+]
